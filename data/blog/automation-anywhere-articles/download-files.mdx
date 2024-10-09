@@ -1,0 +1,27 @@
+---
+title: 'Download files in Automation Anywhere'
+date: '2018-06-26'
+tags: ['automation anywhere', 'guide', 'rpa']
+draft: false
+summary: 'This article is a guide to download files using automation anywhere.'
+---
+
+There are two ways to download files in Automation Anywhere, you can choose either methods depending on your requirement.
+
+## HTTP WITHOUT ANY NEED FOR AUTHENTICATION
+
+If you have a simple HTTP link that doesn’t need you to provide any authentication details, its easy as AA provides a command called Download file that literally opens IE and downloads files. This is way better than you downloading using object cloaning as for starters, its fast. However its simply just opening link in IE and saving in mentioned folder.
+
+## HTTPS WITH USERNAME AND PASSWORD
+
+What if you need to provide username and password to download, there is nothing that AA provides OOTB that would help. Traditional approach is too slow, also in our case AHT was crucial as this is supposed to be a batch process. Here is what we did
+
+Used wget! Yes this tool has been so helpful and its free to use, it downloads file instantly. All you need is build URL like
+
+```
+https://<username>:<password>@url.com
+```
+
+I think this is faster than the download file command.
+
+Note: Perhaps the only thing you need to think about is mostly how to make sure file has been successfully downloaded. In our case we relied on the file size being greater than zero

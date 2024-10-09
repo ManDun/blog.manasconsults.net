@@ -1,0 +1,15 @@
+---
+title: 'Common Problems faced in Python'
+date: '2018-10-14'
+tags: ['python', 'guide']
+draft: false
+summary: 'This article talks about some common problems faced in Python and my experience fixing them.'
+---
+
+# DATABASE CONNECTION SEEM HIJACKED AFTER PYTHON SCRIPTS EXECUTE
+
+I observed that after I wrote and execute script in python that connects to database to execute a query, my usual operations on database using sql editor did not yield a response, when I closed python execution windows, that’s when I got the response back from database. That made me believe I hadn’t done all the right things still, and closing just the cursor wasn’t enough, I avoided this problem using System.exit(0), however I knew that’s not how ideally its supposed to be. I learnt using the following to safely close connections in addition to system.exit(0)
+
+- cursor.close() – Closes the database cursor that holds that data to query written, you can create multiple cursors on same connection
+- del cursor() – Deletes the cursor
+- con.close() – Closes connection, it is always advisable to create one connection and reuse by creating multiple cursors as a connection is expensive

@@ -1,0 +1,56 @@
+---
+title: 'Connection Refused Error: Django'
+date: '2020-05-02'
+tags: ['django', 'error', 'guide', 'python']
+draft: false
+summary: 'This article is a guide to solve connection refused error in Django if you are using cookiecutter-django.'
+---
+
+After succesfully setting up cookiecutter when the user tries to signup in the sample application, the following error is thrown
+
+```
+File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/smtplib.py", line 253, in __init__
+ (code, msg) = self.connect(host, port)
+File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/smtplib.py", line 339, in connect
+ self.sock = self._get_socket(host, port, self.timeout)
+File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/smtplib.py", line 308, in _get_socket
+ return socket.create_connection((host, port), timeout)
+File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/socket.py", line 808, in create_connection
+ raise err
+File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/socket.py", line 796, in create_connection
+ sock.connect(sa)
+ConnectionRefusedError: [Errno 61] Connection refused
+```
+
+### REASON:
+
+The default auth model requires user email verification(confirmation) for the registered user, you must’ve not provided a valid email smtp server (This server is used for all email service for this app)
+
+### RESOLUTION:
+
+- Provide valid smtp details [server name, port] in EMAIL section of app_name/config/settings/local.py
+- If you dont have valid email server details, change the EMAIL_BACKEND settings in app_name/config/settings/base.py under EMAIL
+
+#### Before
+
+```
+EMAIL_BACKEND = env(
+“DJANGO_EMAIL_BACKEND”, default=”django.core.mail.backends.smtp.EmailBackend”
+)
+```
+
+#### After
+
+```
+EMAIL_BACKEND = env(
+“DJANGO_EMAIL_BACKEND”, default=”django.core.mail.backends.console.EmailBackend”
+)
+```
+
+Restart the server (the server auto restarts) sign up again and this time you would see the email body in console instead. Click on the given link to confirm email
+
+### REFERENCES:
+
+- [Read the docs](https://cookiecutter-django.readthedocs.io/en/latest/index.html)
+- [Cookie Cutter Django Repo](https://github.com/pydanny/cookiecutter-django)
+- [Github Issue](https://github.com/pydanny/cookiecutter-django/issues/323)
