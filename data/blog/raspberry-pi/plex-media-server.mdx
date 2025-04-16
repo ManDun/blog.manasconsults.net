@@ -1,0 +1,164 @@
+---
+title: 'Setup Plex Media Server on Raspberry Pi'
+date: '2018-05-06'
+tags: ['plex', 'raspberry-pi', 'guide']
+draft: false
+summary: 'This article is a guide to innstalling and setting up plex media server on Raspberry Pi.'
+---
+
+I have used kodi player for a while before deciding to try my hands on plex media server. The main reason I did not try this server before is due to the setup required. However with time, I realised a media server has bigger benefits than just a media player.
+
+### PRE REQUISITES – PREPARING RASPBERRY PI
+
+The next set of steps are prerequisites to start installation. To setup plex media server on raspberry pi, you will have to have the latest raspbian
+
+### UPDATE TO LATEST RASPBIAN AND GET ALL PACKAGES
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+### UPDATE HTTPS PACKAGE
+
+The next step is to update https package as we would need to download package for plex from official repository using https protocol
+
+```
+sudo apt-get install apt-transport-https
+```
+
+### ADD PLEX REPO KEY TO APT MANAGERS KEY LIST
+
+To ensure authenticity and trust on the files downloaded from repository, we add the key from the repo to list in package manager
+
+```
+curl https://downloads.plex.tv/plex-keys/PlexSign.key | sudo apt-key add -
+```
+
+### ADD PLEX REPO TO SOURCES
+
+Add plex repository to the sources so we could use apt-get to update
+
+```
+echo deb https://downloads.plex.tv/repo/deb public main | sudo tee /etc/apt/sources.list.d/plexmediaserver.list
+```
+
+### RUN UPDATE COMMAND TO UPDATE LIST OF PACKAGES
+
+Run update command to update the list of packages to download
+
+```
+sudo apt-get update
+```
+
+If you have installed https package properly this should work without an issue
+
+### INSTALL PLEX MEDIA SERVER
+
+The next set of steps installs media server and performs necessary setup relates steps required
+
+### INSTALL THE SERVER
+
+```
+sudo apt-get install plexmediaserver
+```
+
+On the below prompt select Y
+
+```
+Configuration file '/etc/apt/sources.list.d/plexmediaserver.list'
+
+==> File on system created by you or by a script.
+
+==> File also in package provided by package maintainer.
+
+What would you like to do about it ? Your options are:
+
+    Y or I  : install the package maintainer's version
+
+    N or O  : keep your currently-installed version
+
+      D     : show the differences between the versions
+
+      Z     : start a shell to examine the situation
+```
+
+The default action is to keep your current version.
+
+```
+\*\*\* plexmediaserver.list (Y/I/N/O/D/Z) [default=N] ? Y
+```
+
+The installation would complete with the following details:
+
+```
+Installing new version of config file /etc/apt/sources.list.d/plexmediaserver.list ...
+PlexMediaServer install: PlexMediaServer-1.19.2.2737-b69929dab - Installation starting.
+PlexMediaServer install:
+PlexMediaServer install: Now installing based on:
+PlexMediaServer install: Installation Type: New
+PlexMediaServer install: Process Control: systemd
+PlexMediaServer install: Plex User: plex
+PlexMediaServer install: Plex Group: plex
+PlexMediaServer install: Video Group: video
+PlexMediaServer install: Metadata Dir: /var/lib/plexmediaserver/Library/Application Support
+PlexMediaServer install: Temp Directory: /tmp
+PlexMediaServer install: Lang Encoding: en_US.UTF-8
+PlexMediaServer install: Transcoding HW: Not found
+PlexMediaServer install:
+PlexMediaServer install: Completing final configuration.
+Created symlink /etc/systemd/system/multi-user.target.wants/plexmediaserver.service → /lib/systemd/system/plexmediaserver.service.
+PlexMediaServer install: PlexMediaServer-1.19.2.2737-b69929dab - Installation successful. Errors: 0, Warnings: 0
+```
+
+As you can see from above it creates a new user and group called plex, lists the meta directory /var/lib/plexmediaserver/Library/Application Support which stores application details.
+
+Plex media creates a new service to start on startup
+
+### SETTING UP STATIC IP
+
+Since this servers as a media server, you would need to keep its ip address static so all devices can access this server uninterrupted. To do this
+
+### CHECK IP ADDRESS
+
+```
+hostname -I
+```
+
+### UPDATE IP ADDRESS (STATIC)
+
+To keep pi use the same ip address on login, edit the following text file, add your ip address
+
+```
+sudo nano /boot/cmdline.txt
+```
+
+Add the below line as a last line in the file above. For reference I have added my ip address
+
+CTRL+X and CTRL+S to save
+
+```
+ip=192.168.1.102
+```
+
+Restart pi
+
+```
+sudo reboot
+```
+
+### FAQ
+
+#### LIBRARY EMPTY AFTER SETUP :
+
+After setup of libraries, you would see that your files wouldnt show up still, one of the common reasons is plex media server runs on user plex, where as the default user for raspberry is pi, chances are you have mounted the external drive and pi is its owner.
+
+You will have to change permissions so other users have read access, run the following command
+
+```
+sudo chmod 755 /media/pi
+```
+
+### REFERENCES:
+
+[Setup Documentation](https://pimylifeup.com/raspberry-pi-plex-server/)
